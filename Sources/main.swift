@@ -5,9 +5,9 @@ import KituraSys
 let router = Router()
 
 router.get("/") {
-  request, response, next in
-  response.status(.OK).send("Hello, World!")
-  next()
+request, response, next in
+    response.status(.OK).send("Hello, World!")
+    next()
 }
 
 let server = HTTPServer.listen(port: 8090, delegate: router)
