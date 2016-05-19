@@ -7,9 +7,7 @@ let router = Router()
 
 let html = "<!DOCTYPE html><head><script src=\"https://aframe.io/releases/latest/aframe.min.js\"></script></head><body><a-scene><a-cube position=\"-2 1 0\" color=\"#C00\"></a-cube><a-sphere position=\"0 1 0\" color=\"#0C0\"></a-sphere><a-cylinder position=\"2 1 0\" color=\"#00C\"></a-cylinder><a-sky color=\"#EEE\"></a-sky></a-scene></body>"
 
-
-
-func constructResourcePathFromSourceLocation(resource: String) -> String {
+func constructResourcePathFromSourceLocation(_ resource: String) -> String {
   let fileName = NSString(string: #file)
   let resourceFilePrefixRange: NSRange
   let lastSlash = fileName.range(of: "/", options: NSStringCompareOptions.backwardsSearch)
@@ -18,33 +16,9 @@ func constructResourcePathFromSourceLocation(resource: String) -> String {
   } else {
     resourceFilePrefixRange = NSMakeRange(0, fileName.length)
   }
-  return fileName.substring(with: resourceFilePrefixRange) + "resources/" + resource
+//  return fileName.substring(with: resourceFilePrefixRange) + "resources/" + resource
+  return fileName.substring(with: resourceFilePrefixRange) + resource
 }
-
-class test {
-  func test(t: String) -> String {
-    return "tester" + t
-  }
-  
-  func nopram() {
-    
-  }
-}
-
-func noParam() {
-  
-}
-
-func paramater(_ i :Int) {
-  
-}
-
-noParam()
-paramater(1)
-
-let t = test()
-
-//t.test("s")
 
 router.get("/") {
   request, response, next in
@@ -62,20 +36,32 @@ router.get("other") {
   next()
 }
 
-let htmlFilePath = "index.path"
+let htmlFilePath = "sample.html"
 #if os(Linux)
-let fileManager = NSFileManager.defaultManager()
+  let fileManager = NSFileManager.defaultManager()
+  print("Linux OS")
 #else
-let fileManager = NSFileManager.default()
+  let fileManager = NSFileManager.default()
+  print("OS X")
 #endif
-//let potentialResource = constructResourcePathFromSourceLocation("abs")
-//let fileExists = fileManager.fileExists(atPath: potentialResource)
-//if fileExists {
-//  print("get file")
-//} else {
-//  print("no file path")
-//}
-//print(resourceFileName)
+
+
+func researchDirs(_ path: String) {
+  if let list = try? NSFileManager.default().contentsOfDirectory(atPath: path) {
+    list.forEach {
+      let nextPath = path == "/" ? path + $0 : path + "/" + $0
+      print("researchDirs path \(nextPath)")
+      researchDirs(nextPath)
+    }
+  }
+}
+
+// researchDirs("/")
+
+let potentialResource = constructResourcePathFromSourceLocation(htmlFilePath)
+print("potentialResource \(potentialResource)")
+let fileExists = fileManager.fileExists(atPath: potentialResource)
+print("fileExists \(fileExists)")
 
 let server = HTTPServer.listen(port: 8090, delegate: router)
 Server.run()
