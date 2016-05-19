@@ -5,33 +5,11 @@ import KituraSys
 
 let router = Router()
 
-let html = "<!DOCTYPE html><head><script src=\"https://aframe.io/releases/latest/aframe.min.js\"></script></head><body><a-scene><a-cube position=\"-2 1 0\" color=\"#C00\"></a-cube><a-sphere position=\"0 1 0\" color=\"#0C0\"></a-sphere><a-cylinder position=\"2 1 0\" color=\"#00C\"></a-cylinder><a-sky color=\"#EEE\"></a-sky></a-scene></body>"
-
-private func test() {
-
-}
-
-
-// researchDirs("/")
-
-// let potentialResource = constructResourcePathFromSourceLocation(htmlFilePath)
-// print("potentialResource \(potentialResource)")
-// let fileExists = fileManager.fileExists(atPath: potentialResource)
-// print("fileExists \(fileExists)")
-// do {
-//     try routeResp.send(fileName: resourceFileName)
-//     routeResp.status(.OK)
-//     try routeResp.end()
-// } catch {
-//     // Fail silently
-// }
-
-private func sendResourceIfExisting(_ routeResp: RouterResponse, resource: String)  {
+func sendResourceIfExisting(_ routeResp: RouterResponse, resource: String)  {
     guard let resourceFileName = getResourceFilePath(resource) else {
         return
     }
 
-    print("resourceFileName \(resourceFileName)")
     do {
         try routeResp.send(fileName: resourceFileName)
         routeResp.status(.OK)
@@ -57,7 +35,7 @@ func getResourceFilePath(_ resource: String) -> String? {
     }
 }
 
-public func constructResourcePathFromSourceLocation(_ resource: String) -> String {
+func constructResourcePathFromSourceLocation(_ resource: String) -> String {
   let fileName = NSString(string: #file)
   let resourceFilePrefixRange: NSRange
   let lastSlash = fileName.range(of: "/", options: NSStringCompareOptions.backwardsSearch)
@@ -74,14 +52,9 @@ router.get("/") {
   request, response, next in
   let aframe = Aframe()
   let responseData = "response"
-  // response.status(.OK).send(html)
-  // sendResourceIfExisting(response, resource: "sample.html")
-  print("get")
   sendResourceIfExisting(response, resource: "sample.html")
   next()
 }
-
-
 
 router.get("other") {
   request, response, next in
@@ -89,16 +62,6 @@ router.get("other") {
   response.status(.OK).send(responseData)
   next()
 }
-
-let htmlFilePath = "sample.html"
-#if os(Linux)
-  let fileManager = NSFileManager.defaultManager()
-  print("Linux OS")
-#else
-  let fileManager = NSFileManager.default()
-  print("OS X")
-#endif
-
 
 let server = HTTPServer.listen(port: 8090, delegate: router)
 Server.run()
